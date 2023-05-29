@@ -8,12 +8,16 @@ import { HomeComponent } from './home/home.component';
 import { ClipboardModule } from 'ngx-clipboard';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { GameComponent } from './game/game.component';
+import { ProgressBarComponent } from './shared/progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    HomeComponent
+    HomeComponent,
+    GameComponent,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,
