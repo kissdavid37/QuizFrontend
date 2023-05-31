@@ -28,6 +28,7 @@ onCreateGroup(){
   this.groupService.createGroup(this.groupID).subscribe({
     next: ()=>{
       this.isGenerated=true;
+      localStorage.setItem('groupName',this.groupID);
     },
     error: (e:HttpErrorResponse)=>{
       console.log(e)
