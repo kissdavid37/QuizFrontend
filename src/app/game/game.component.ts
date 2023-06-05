@@ -1,24 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameService } from './game.service';
 import { Question } from '../Questions/question';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Answer } from '../Answer/answer';
+import { ActivatedRoute } from '@angular/router';
+import { timer } from 'rxjs';
+import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit,OnDestroy {
   questions:Question[]=[];
   answers:Answer[]=[];
   currentQuestion:Question={id:0,groupId:0,text:'Loading'};
   iteration:number=0;
   isLoading:Boolean=false;
+  isError:Boolean=false;
+  errorMessage:string=null;
+  interval;
+  start=100;
 
-  constructor(private gameService:GameService) {
-    this.onGetQuestionsByGroup(localStorage.getItem('groupName'));
-
+  constructor(private gameService:GameService, private route:ActivatedRoute) {
+    this.onGetQuestionsByGroup(this.route.snapshot.params.groupName);
   }
 
   ngOnInit(): void {
@@ -30,14 +36,14 @@ export class GameComponent implements OnInit {
           this.isLoading=true;
           this.questions = question;
           this.currentQuestion = this.questions[this.iteration];
-          console.log(this.currentQuestion);
-          console.log(this.currentQuestion['question_id']);
           this.onGetAnswersByQuestion(this.currentQuestion['question_id']);
           this.isLoading=false;
       },
       error:(e:HttpErrorResponse)=>{
         this.isLoading=false;
         console.log(e.error);
+        this.isError=true;
+        this.errorMessage=e.message;
       }
     })
   }
@@ -50,12 +56,34 @@ export class GameComponent implements OnInit {
         this.answers=answer;
         this.isLoading=false;
         console.log(this.answers);
+        this.timer();
 
       },
       error: (e:HttpErrorResponse)=>{
         console.log(e.error);
         this.isLoading=false;
+        this.isError=true;
+        this.errorMessage=e.error;
       }
+    })
+  }
+
+  onAnswerQuestion(userAnswer:number){
+    const groupname=this.route.snapshot.params.groupName;
+    const userId=+localStorage.getItem('current_user');
+    let questionId=this.currentQuestion['question_id']
+    this.gameService.answerQuestion(groupname,userId,questionId,userAnswer).subscribe({
+      next:(answer)=>{
+        console.log(answer);
+        this.iterate();
+      },
+      error: (e:HttpErrorResponse)=>{
+        console.log(e.error);
+        this.isLoading=false;
+        this.isError=true;
+        this.errorMessage=e.error;
+      }
+
     })
   }
 
@@ -68,6 +96,24 @@ export class GameComponent implements OnInit {
       this.currentQuestion = this.questions.at(this.iteration);
       this.onGetAnswersByQuestion(this.currentQuestion['question_id']);
     }
+  }
+
+  timer(){
+
+    this.interval=setInterval(()=>{
+      if(this.start>0){
+        this.start=this.start-10;
+      }
+      else{
+        clearInterval(this.interval);
+        this.iterate();
+        this.start=100;
+      }
+    },1000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.interval);
   }
 
 }

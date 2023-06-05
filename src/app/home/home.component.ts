@@ -28,7 +28,6 @@ onCreateGroup(){
   this.groupService.createGroup(this.groupID).subscribe({
     next: ()=>{
       this.isGenerated=true;
-      localStorage.setItem('groupName',this.groupID);
     },
     error: (e:HttpErrorResponse)=>{
       console.log(e)
@@ -49,6 +48,7 @@ onJoinGroup(){
     next: ()=>{
       console.log(this.joinInput);
       this.isError=false;
+      this.router.navigate([`/game/${this.joinInput}`]);
     },
     error:(e:HttpErrorResponse)=>{
       this.errorMessage=e.error
@@ -59,6 +59,6 @@ onJoinGroup(){
 
 onSingleGame(){
   this.onCreateGroup();
-  this.router.navigate(['/game']);
+  this.router.navigate([`/game/${this.joinInput}`]);
 }
 }
