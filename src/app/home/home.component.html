@@ -13,7 +13,7 @@
         <input type="text" class="groupID" readonly value="{{groupID}}" (click)="onCopyToClipboard()">
         <p style="color: white;" *ngIf="isCopied">The groupId is copied!</p>
       </div>
-      <button class="btn btn-warning">Single Game</button>
+      <button class="btn btn-warning" (click)="onSingleGame()">Single Game</button>
       <div class="d-flex flex-column">
         <button class="btn btn-warning" (click)="onJoinGroup()" [disabled]="joinInput ===''">Join</button>
         <input type="text" class="groupID-input" [(ngModel)]="joinInput">

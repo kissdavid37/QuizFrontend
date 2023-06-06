@@ -1,0 +1,29 @@
+<div class="container-fluid">
+  <div class="form-container">
+    <!-- <div class="spinner" >
+      <app-loading-spinner></app-loading-spinner>
+    </div> -->
+    <form [formGroup]="signupForm"
+      (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <p style="color: red;" *ngIf="error">{{errorMessage}}</p>
+        <label for="username">Username</label>
+        <input class="form-control" type="text" id="username" formControlName="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input class="form-control" type="password" id="password" formControlName="password">
+      </div>
+      <div class="form-group" *ngIf="!isLoginMode">
+        <label for="confirmPassword">Confirm Password</label>
+        <input class="form-control" type="password" id="confirmPassword" formControlName="confirmPassword">
+      </div>
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-warning" type="submit" [disabled]="!signupForm.valid">{{isLoginMode?'Login':'Sign
+          up'}}</button>
+        <button class="btn btn-warning" type="button" (click)="onSwitchMode()">Switch to {{isLoginMode? 'sign
+          up':'Login'}}</button>
+      </div>
+    </form>
+  </div>
+</div>
