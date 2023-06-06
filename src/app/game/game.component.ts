@@ -3,7 +3,7 @@ import { GameService } from './game.service';
 import { Question } from '../Questions/question';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Answer } from '../Answer/answer';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { timer } from 'rxjs';
 import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 
@@ -23,7 +23,7 @@ export class GameComponent implements OnInit,OnDestroy {
   interval;
   start=100;
 
-  constructor(private gameService:GameService, private route:ActivatedRoute) {
+  constructor(private gameService:GameService, private route:ActivatedRoute,private router:Router) {
     this.onGetQuestionsByGroup(this.route.snapshot.params.groupName);
   }
 
@@ -56,7 +56,7 @@ export class GameComponent implements OnInit,OnDestroy {
         this.answers=answer;
         this.isLoading=false;
         console.log(this.answers);
-        this.timer();
+        //this.timer();
 
       },
       error: (e:HttpErrorResponse)=>{
@@ -95,6 +95,9 @@ export class GameComponent implements OnInit,OnDestroy {
       this.currentQuestion=this.questions.at(this.iteration);
       this.currentQuestion = this.questions.at(this.iteration);
       this.onGetAnswersByQuestion(this.currentQuestion['question_id']);
+    }
+    else{
+      this.router.navigate([`${this.route.snapshot.url}/stats`])
     }
   }
 
