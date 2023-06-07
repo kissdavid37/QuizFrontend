@@ -4,7 +4,7 @@
       <app-loading-spinner></app-loading-spinner>
     </div> -->
     <form [formGroup]="signupForm"
-      (ngSubmit)="onSubmit()">
+      (ngSubmit)="onSubmit(signupForm.get('username').value,signupForm.get('password').value,signupForm.get('confirmPassword').value)">
       <div class="form-group">
         <p style="color: red;" *ngIf="error">{{errorMessage}}</p>
         <label for="username">Username</label>

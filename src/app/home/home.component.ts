@@ -19,13 +19,13 @@ joinInput:string="";
 username:string
 
 constructor(private clipboardService:ClipboardService, private groupService:GroupService,private router:Router) {
-  this.username=localStorage.getItem('username')
+  this.username=sessionStorage.getItem('username')
 }
 
 
-onCreateGroup(){
+async onCreateGroup(){
   this.groupID= Math.floor(Math.random() * Date.now()).toString(36)
-  this.groupService.createGroup(this.groupID).subscribe({
+ await this.groupService.createGroup(this.groupID).subscribe({
     next: ()=>{
       this.isGenerated=true;
     },
@@ -43,8 +43,8 @@ onCopyToClipboard(){
   }
 }
 
-onJoinGroup(){
-  this.groupService.joinGroup(this.joinInput).subscribe({
+async onJoinGroup(){
+ await this.groupService.joinGroup(this.joinInput).subscribe({
     next: ()=>{
       console.log(this.joinInput);
       this.isError=false;
@@ -59,6 +59,6 @@ onJoinGroup(){
 
 onSingleGame(){
   this.onCreateGroup();
-  this.router.navigate([`/game/${this.joinInput}`]);
+  this.onJoinGroup();
 }
 }

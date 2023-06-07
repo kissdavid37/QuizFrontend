@@ -44,6 +44,7 @@ export class GameComponent implements OnInit,OnDestroy {
         console.log(e.error);
         this.isError=true;
         this.errorMessage=e.message;
+        clearInterval(this.interval);
       }
     })
   }
@@ -56,7 +57,7 @@ export class GameComponent implements OnInit,OnDestroy {
         this.answers=answer;
         this.isLoading=false;
         console.log(this.answers);
-        //this.timer();
+        this.timer();
 
       },
       error: (e:HttpErrorResponse)=>{
@@ -70,18 +71,21 @@ export class GameComponent implements OnInit,OnDestroy {
 
   onAnswerQuestion(userAnswer:number){
     const groupname=this.route.snapshot.params.groupName;
-    const userId=+localStorage.getItem('current_user');
+    const publicId=sessionStorage.getItem('public_id');
     let questionId=this.currentQuestion['question_id']
-    this.gameService.answerQuestion(groupname,userId,questionId,userAnswer).subscribe({
+    this.gameService.answerQuestion(groupname,publicId,questionId,userAnswer).subscribe({
       next:(answer)=>{
         console.log(answer);
         this.iterate();
+        clearInterval(this.interval);
+        this.start=100;
       },
       error: (e:HttpErrorResponse)=>{
         console.log(e.error);
         this.isLoading=false;
         this.isError=true;
         this.errorMessage=e.error;
+        clearInterval(this.interval);
       }
 
     })
@@ -102,15 +106,14 @@ export class GameComponent implements OnInit,OnDestroy {
   }
 
   timer(){
-
     this.interval=setInterval(()=>{
       if(this.start>0){
         this.start=this.start-10;
       }
       else{
         clearInterval(this.interval);
-        this.iterate();
         this.start=100;
+        this.iterate();
       }
     },1000);
   }
